@@ -100,7 +100,7 @@ var searchEntry = function (event) {
     }
     if (event.target.textContent === "Search") {
         var value = inputEl.value.trim();
-        if (buttonArray.map(element => {return element.toLowerCase()}).indexOf(`${value.toLowerCase()}`) !== -1) {
+        if (buttonArray.map(element => { return element.toLowerCase() }).indexOf(`${value.toLowerCase()}`) !== -1) {
             currentWeather(value);
             fivedayForecast(value);
             return;
@@ -121,9 +121,21 @@ searchBar.addEventListener("click", searchEntry);
 // For loop that renders localStorage items as buttons. May need to adjust this so that no other local storage items are rendered accidentally. 
 // Actual: I had two old local storage items and they rendered two blank buttons. may need to sort the array so that only keys with
 // "savedButton" text in them are considered part of the array.
-for (let t = 0; t < localStorage.length; t++) {
-    const element = localStorage.getItem(`savedButton${t}`);
-    newButtons.appendChild(document.createElement("button")).className = `w-100 mt-2 btn btn-info search-button`;
-    searchBar.children[0].lastChild.textContent = element;
-    buttonArray.push(element);
+
+// for (let t = 0; t < localStorage.length; t++) {
+//     const element = localStorage.getItem(`savedButton${t}`);
+//     newButtons.appendChild(document.createElement("button")).className = `w-100 mt-2 btn btn-info search-button`;
+//     searchBar.children[0].lastChild.textContent = element;
+//     buttonArray.push(element);
+// }
+
+for (const property in localStorage) {
+    if (property.indexOf("savedButton") !== -1) {
+        console.log(property);
+        const element = localStorage.getItem(property);
+        newButtons.appendChild(document.createElement("button")).className = `w-100 mt-2 btn btn-info search-button`;
+        searchBar.children[0].lastChild.textContent = element;
+        buttonArray.push(element);
+    }
 }
+
