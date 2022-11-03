@@ -2,7 +2,7 @@ var apiKey = "82273e2ffbfbb5621069d2976422e5ca";
 var searchButton = document.querySelector(".search-button");
 var searchBar = document.querySelector(".search-bar");
 var forecastEl = document.querySelector(".forecast-row").children;
-var city = "Salinas";
+var city = "San Diego";
 var inputEl = document.querySelector("input");
 
 var mainEl = document.querySelector("main");
@@ -22,12 +22,13 @@ function currentWeather(city) {
     var current = fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=82273e2ffbfbb5621069d2976422e5ca&units=imperial`, requestOptions)
         .then(response => response.json())
         .then(result => {
+            var cityName = result.name;
             var windSpeed = `Wind: ${result.wind.speed} MPH`;
             var temp = `Temp: ${result.main.temp} \u2109`;
             var icon = result.weather[0].icon;
             var humidity = `Humidity: ${result.main.humidity}%`;
             var date = moment().format("MM/DD/YY");
-            var topRow = `${city}, ${date} <img src="http://openweathermap.org/img/w/${icon}.png" alt="">`;
+            var topRow = `${cityName}, ${date} <img src="http://openweathermap.org/img/w/${icon}.png" alt="">`;
             currentEl[0].innerHTML = topRow;
             currentEl[1].textContent = temp;
             currentEl[2].textContent = windSpeed;
@@ -41,7 +42,6 @@ function fivedayForecast(city) {
     var forecast = fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=imperial`)
         .then(response => response.json())
         .then(result => {
-            var cityName = result.city.name;
             var count = 0;
             for (let i = 0; i < result.list.length; i++) {
                 const element = result.list[i].dt_txt;
@@ -99,7 +99,7 @@ var searchEntry = function (event) {
     }
     if (event.target.textContent === "Search") {
         var value = inputEl.value.trim();
-        if (buttonArray.indexOf(`${value}`) !== -1) {
+        if (buttonArray.map(element => {return element.toLowerCase()}).indexOf(`${value.toLowerCase()}`) !== -1) {
             currentWeather(value);
             fivedayForecast(value);
             return;
