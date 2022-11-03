@@ -1,14 +1,14 @@
+// Query Select Elements and store API key
 var apiKey = "82273e2ffbfbb5621069d2976422e5ca";
 var searchButton = document.querySelector(".search-button");
 var searchBar = document.querySelector(".search-bar");
 var forecastEl = document.querySelector(".forecast-row").children;
 var city = "San Diego";
 var inputEl = document.querySelector("input");
-
 var mainEl = document.querySelector("main");
 var currentEl = mainEl.children[1].children[0].children;
 var newButtons = mainEl.children[0];
-// Query Select Elements
+// Render San Diego Weather upon initial open
 currentWeather(city);
 fivedayForecast(city);
 
@@ -17,6 +17,7 @@ var requestOptions = {
     redirect: 'follow'
 };
 
+// Function to get current weather report and render to page. One argument needed.
 function currentWeather(city) {
 
     var current = fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=82273e2ffbfbb5621069d2976422e5ca&units=imperial`, requestOptions)
@@ -37,6 +38,8 @@ function currentWeather(city) {
         .catch(error => console.log('error', error));
 }
 
+// Function to get five day forecast. One argument needed. When a five day forecast array is created with the desired data
+// it will initiate the forecastLoop function that renders the data to the page.
 function fivedayForecast(city) {
     var forecastArray = [];
     var forecast = fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=imperial`)
@@ -51,7 +54,7 @@ function fivedayForecast(city) {
                 // Using the hour to select the data might not be the best. 
                 if (hour === "12" && parseInt(today) < parseInt(tomorrow) || i === result.list.length - 1) {
                     if (count === 5) {
-                        forecastLoop();
+                        forecastLoop(forecastArray);
                     } else {
                         var windSpeed = `Wind: ${result.list[i].wind.speed} MPH`;
                         var temp = `Temp: ${result.list[i].main.temp} \u2109`;
@@ -69,11 +72,7 @@ function fivedayForecast(city) {
         .catch(error => console.log('error', error));
 }
 
-// May use city name for current weather: https://api.openweathermap.org/data/2.5/weather?q={city name}&appid={API key}
-// Fetch API. Create a separate function so the original search button and
-// local storage buttons can run through the function
-// Use local storage array to dynamically create buttons after the search button is clicked.
-
+// Renders five day forecast array data to the page.
 var forecastLoop = function (forecastArray) {
     for (let x = 0; x < forecastEl.length; x++) {
         for (let y = 0; y < forecastArray.length; y++) {
@@ -89,11 +88,13 @@ var forecastLoop = function (forecastArray) {
 
 var buttonArray = [];
 var storageCount = localStorage.length;
+
+// Click event function for Search Button, and Buttons saved to localStorage. Each condition will initiate currentWeather and
+// fivedayForecast functions
 var searchEntry = function (event) {
     event.preventDefault();
     if (event.target.textContent !== "Search" && event.target.tagName === "BUTTON") {
         value = event.target.textContent;
-        console.log(value);
         currentWeather(value);
         fivedayForecast(value);
     }
@@ -109,14 +110,17 @@ var searchEntry = function (event) {
         searchBar.children[0].lastChild.textContent = value;
         localStorage.setItem(`savedButton${storageCount}`, value);
         storageCount += 1;
-        console.log(value);
         currentWeather(value);
         fivedayForecast(value);
     }
 }
 
+// Event listener for click event function.
 searchBar.addEventListener("click", searchEntry);
 
+// For loop that renders localStorage items as buttons. May need to adjust this so that no other local storage items are rendered accidentally. 
+// Actual: I had two old local storage items and they rendered two blank buttons. may need to sort the array so that only keys with
+// "savedButton" text in them are considered part of the array.
 for (let t = 0; t < localStorage.length; t++) {
     const element = localStorage.getItem(`savedButton${t}`);
     newButtons.appendChild(document.createElement("button")).className = `w-100 mt-2 btn btn-info search-button`;
