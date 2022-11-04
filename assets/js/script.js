@@ -118,24 +118,14 @@ var searchEntry = function (event) {
 // Event listener for click event function.
 searchBar.addEventListener("click", searchEntry);
 
-// For loop that renders localStorage items as buttons. May need to adjust this so that no other local storage items are rendered accidentally. 
-// Actual: I had two old local storage items and they rendered two blank buttons. may need to sort the array so that only keys with
-// "savedButton" text in them are considered part of the array.
-
+// For loop renders localStorage items as buttons to save previous Weather searches.
 for (let t = 0; t < localStorage.length; t++) {
     const element = localStorage.getItem(`savedButton${t}`);
-    newButtons.appendChild(document.createElement("button")).className = `w-100 mt-2 btn btn-info search-button`;
-    searchBar.children[0].lastChild.textContent = element;
-    buttonArray.push(element);
+    if (element !== null) {
+        newButtons.appendChild(document.createElement("button")).className = `w-100 mt-2 btn btn-info search-button`;
+        searchBar.children[0].lastChild.textContent = element;
+        buttonArray.push(element);        
+    }
 }
 
-// for (const property in localStorage) {
-//     if (property.indexOf("savedButton") !== -1) {
-//         console.log(property);
-//         const element = localStorage.getItem(property);
-//         newButtons.appendChild(document.createElement("button")).className = `w-100 mt-2 btn btn-info search-button`;
-//         searchBar.children[0].lastChild.textContent = element;
-//         buttonArray.push(element);
-//     }
-// }
 
