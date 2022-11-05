@@ -8,6 +8,7 @@ var inputEl = document.querySelector("input");
 var mainEl = document.querySelector("main");
 var currentEl = mainEl.children[1].children[0].children;
 var newButtons = mainEl.children[0];
+var bodyEl = document.querySelector("body");
 // Render San Diego Weather upon initial open
 currentWeather(city);
 fivedayForecast(city);
@@ -29,13 +30,17 @@ function currentWeather(city) {
             var icon = result.weather[0].icon;
             var humidity = `Humidity: ${result.main.humidity}%`;
             var date = moment().format("MM/DD/YY");
-            var topRow = `${cityName}, ${date} <img src="http://openweathermap.org/img/w/${icon}.png" alt="">`;
+            var topRow = `${cityName}, ${date} <img src="https://openweathermap.org/img/w/${icon}.png" alt="">`;
             currentEl[0].innerHTML = topRow;
             currentEl[1].textContent = temp;
             currentEl[2].textContent = windSpeed;
             currentEl[3].textContent = humidity;
         })
-        .catch(error => console.log('error', error));
+        .catch(error => {
+            console.log('error', error);
+            console.log(city);
+            alert(`The searched city, "${city}" was not found. Please check the spelling and try again.`);
+        });
 }
 
 // Function to get five day forecast. One argument needed. When a five day forecast array is created with the desired data
@@ -69,7 +74,10 @@ function fivedayForecast(city) {
             forecastLoop(forecastArray);
         }
         )
-        .catch(error => console.log('error', error));
+        .catch(error => {
+            console.log('error', error);
+            return;
+        });
 }
 
 // Renders five day forecast array data to the page.
@@ -79,7 +87,7 @@ var forecastLoop = function (forecastArray) {
             var El = forecastEl[x].children[y];
             var text = forecastArray[x][y];
             if (y === 1) {
-                El.setAttribute("src", `http://openweathermap.org/img/w/${text}.png`);
+                El.setAttribute("src", `https://openweathermap.org/img/w/${text}.png`);
             }
             else { El.textContent = text; }
         }
@@ -105,13 +113,13 @@ var searchEntry = function (event) {
             fivedayForecast(value);
             return;
         }
+        currentWeather(value);
+        fivedayForecast(value);
         buttonArray.push(value);
         newButtons.appendChild(document.createElement("button")).className = `w-100 mt-2 btn btn-info search-button`;
         searchBar.children[0].lastChild.textContent = value;
         localStorage.setItem(`savedButton${storageCount}`, value);
         storageCount += 1;
-        currentWeather(value);
-        fivedayForecast(value);
     }
 }
 
@@ -119,13 +127,13 @@ var searchEntry = function (event) {
 searchBar.addEventListener("click", searchEntry);
 
 // For loop renders localStorage items as buttons to save previous Weather searches.
-for (let t = 0; t < localStorage.length; t++) {
+for (let t = 0; t < localStorage.length+10; t++) {
     const element = localStorage.getItem(`savedButton${t}`);
     if (element !== null) {
         newButtons.appendChild(document.createElement("button")).className = `w-100 mt-2 btn btn-info search-button`;
         searchBar.children[0].lastChild.textContent = element;
-        buttonArray.push(element);        
-    }
+        buttonArray.push(element);
+    } else {continue;}
 }
 
 
