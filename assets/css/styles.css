@@ -11,3 +11,9 @@
     background-color: #0069D9;
     color: white;
 }
+
+#search-city {
+    font-family: 'Alfa Slab One', cursive;
+    font-size: 35px;
+    color: black;
+}
